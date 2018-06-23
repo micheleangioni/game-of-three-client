@@ -49,6 +49,7 @@
   import GameSettings from '../common/GameSettings'
   import MatchClient from '../services/match/matchClient'
   import { mapGetters, mapMutations } from 'vuex'
+  import swal from 'sweetalert';
 
   export default {
     components: {
@@ -161,6 +162,74 @@
             number: number
           }
         }
+      },
+
+      _openMoveModal(number, newTry = false) {
+        let text
+
+        if (newTry) {
+          text = `Wrong choice! You must choose a number which can be divided by 3. You got ${number}. Pick a choice:`
+        } else {
+          text = `It's your turn! You got ${number}. Pick a choice:`
+        }
+
+        swal(text, {
+          buttons: {
+            add: {
+              text: 'Add 1',
+              value: 'add',
+            },
+            zero: {
+              text: 'Add nothing',
+              value: 'zero',
+            },
+            minus: {
+              text: 'Subtract 1',
+              value: 'minus',
+            }
+          },
+        })
+          .then(value => {
+            let summedNumber
+
+            switch (value) {
+
+              case 'add':
+                summedNumber = number + 1
+                break;
+
+              case 'zero':
+                summedNumber = number
+                break;
+
+              case 'minus':
+                summedNumber = number - 1
+                break;
+
+              default:
+                console.log('Wrong choice')
+            }
+
+            if (summedNumber % 3 !== 0) {
+              swal('error')
+              this._openMoveModal(number, true)
+              return
+            }
+
+            const nextNumber = summedNumber / 3
+
+            console.log('MY NEXT MOVE: GOT ' + number + ', my move is ' + nextNumber)
+
+            this.updateTurn(number)
+
+            // Send the next move
+            setTimeout(() => {
+              this.socket.emit('next_move', {
+                match_id: this.match.match_id,
+                number: nextNumber
+              })
+            }, 500)
+          });
       }
     },
 
@@ -219,8 +288,10 @@
 
           if (this.match.player1.id === player) {
             this.match.nextTurnPlayer = this.match.player2
+            this.match.currentTurnPlayer = this.match.player1
           } else {
             this.match.nextTurnPlayer = this.match.player1
+            this.match.currentTurnPlayer = this.match.player2
           }
         }
       })
@@ -233,17 +304,17 @@
           const { number, player } = data
 
           if (number === 1 && player === this.userId) {
-            alert('You have won')
+            alert('You have lost')
             return;
           } else if (number === 1 && player !== this.userId) {
-            alert('You have lost')
+            alert('You have won')
             return;
           }
 
           // Check whether the User is the next Player
           console.log('check if I must move', player, this.userId, player === this.userId)
 
-          if (player === this.userId) {
+          if (player === this.userId && this.style === 'auto') {
             const nextNumber = MatchClient.computeNextMoveNumber(number)
 
             console.log('MY NEXT MOVE: GOT ' + number + ', my move is ' + nextNumber)
@@ -257,6 +328,8 @@
                 number: nextNumber
               })
             }, 500)
+          } else if (player === this.userId && this.style === 'manual') {
+            this._openMoveModal(number)
           } else {
             this.updateTurn(number)
           }
@@ -266,7 +339,6 @@
   }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" rel="stylesheet/scss" scoped>
   .moves-container {
     margin-top: 1em;

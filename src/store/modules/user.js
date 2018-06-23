@@ -1,3 +1,5 @@
+import io from 'socket.io-client';
+
 // Initial state
 
 const state = {
@@ -27,7 +29,11 @@ const mutations = {
    * @param state
    */
   init (state) {
-    state.socket = io(process.env.API_URL) // eslint-disable-line
+    const socket = io(process.env.API_URL, {
+      'path': '/game'
+    })
+
+    state.socket = socket
   },
 
   /**

@@ -1,14 +1,21 @@
 <template>
-  <div class="hello">
-    <h1>Welcome to the Game of Three ‐ Coding Challenge</h1>
-    <h4>developed by</h4>
-    <h2><i>Michele Angioni</i></h2>
+  <div class="container">
+    <div class="hello">
+      <h1>Welcome to the Game of Three ‐ Coding Challenge</h1>
+      <h4>developed by</h4>
+      <h2><i>Michele Angioni</i></h2>
+    </div>
+
+    <div>
+      <router-link class="btn btn-primary btn-router" :to="{ name: 'Application' }">Enter the App</router-link>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: 'Home',
+
   data () {
     return {
 
@@ -29,8 +36,5 @@ ul {
 li {
   display: inline-block;
   margin: 0 10px;
-}
-a {
-  color: #42b983;
 }
 </style>

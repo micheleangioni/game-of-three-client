@@ -1,19 +1,11 @@
 <template>
   <div class="game-settings-container">
+
+    <div>
+      Instructions
+    </div>
+
     <form v-on:submit.prevent>
-
-      <div class="form-group">
-
-        <label for="game-username-input">Enter your Username to start the Game</label>
-        <input type="text"
-               id="game-username-input"
-               class="form-control"
-               placeholder="Enter your username"
-               v-model="username"
-        >
-        <small class="form-text text-muted">Please use at least 3 characters.</small>
-
-      </div>
 
       <!-- Game Style Choice -->
 
@@ -45,7 +37,6 @@
 
       <button class="btn btn-success start-button"
               @click="startGame"
-              :disabled="isUsernameInvalid"
       >
         Start Game!
       </button>
@@ -64,21 +55,7 @@ export default {
        * Game style.
        * Allowed values: 'auto', 'manual'.
        */
-      style: 'auto',
-
-      /**
-       * Username.
-       */
-      username: ''
-    }
-  },
-
-  computed: {
-    /**
-     * @returns {boolean}
-     */
-    isUsernameInvalid: function () {
-      return this.username.length < 3
+      style: 'auto'
     }
   },
 
@@ -88,8 +65,7 @@ export default {
      */
     startGame() {
       this.$emit('start_game', {
-        style: this.style,
-        username: this.username
+        style: this.style
       })
     },
 

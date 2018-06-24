@@ -6,19 +6,30 @@
       <h2><i>Michele Angioni</i></h2>
     </div>
 
-    <div>
-      <router-link class="btn btn-primary btn-router" :to="{ name: 'Application' }">Enter the App</router-link>
-    </div>
+    <login v-on:login_performed="loginPerformed"></login>
   </div>
 </template>
 
 <script>
+import Login from '../common/Login'
+import router from '../router/index'
+
 export default {
+  components: {
+    Login
+  },
+
   name: 'Home',
 
   data () {
     return {
 
+    }
+  },
+
+  methods: {
+    loginPerformed(user) {
+      router.push({ name: 'Application'})
     }
   }
 }

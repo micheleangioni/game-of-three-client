@@ -1,9 +1,11 @@
 <template>
   <div class="container">
 
-    <div v-if="match.match_id">Player: {{ username }} <span v-if="userId">{{userId}}</span></div>
+    <div v-if="user" class="player-info">
+      Player: {{ user.username }} | Score: {{ user.won }} wins out of {{ user.played }}
+    </div>
 
-    <div class="messages-container" v-show="username">
+    <div class="messages-container" v-show="user">
       <ul class="list-group">
         <li class="list-group-item disabled active">Messages</li>
 
@@ -19,8 +21,8 @@
       </ul>
     </div>
 
-    <div class="moves-container" v-if="match.nextTurnPlayer" v-show="username">
-      <div>Next Turn: {{ match.nextTurnPlayer.username }}</div>
+    <div class="moves-container" v-if="match.nextTurnPlayer" v-show="user">
+        <div>Next Turn: {{ match.nextTurnPlayer.username }}</div>
 
       <ul class="list-group">
         <li class="list-group-item disabled">Player moves</li>
@@ -38,7 +40,7 @@
       </ul>
     </div>
 
-    <div class="start-game-container" v-show="!username">
+    <div class="start-game-container" v-show="user">
       <game-settings v-on:start_game="startGame"></game-settings>
     </div>
 
@@ -49,6 +51,7 @@
   import GameSettings from '../common/GameSettings'
   import MatchClient from '../services/match/matchClient'
   import { mapGetters, mapMutations } from 'vuex'
+  import router from '../router/index'
   import swal from 'sweetalert';
 
   export default {
@@ -91,18 +94,14 @@
         /**
          * User Player Id.
          */
-        userId: null,
-
-        /**
-         * User Username.
-         */
-        username: ''
+        userId: null
       }
     },
 
     computed: {
       ...mapGetters('user', {
-        socket: 'getSocket'
+        socket: 'getSocket',
+        user: 'getUser'
       })
     },
 
@@ -121,10 +120,9 @@
         registerEvent: 'registerSocketEvent'
       }),
 
-      startGame({ style, username}) {
+      startGame({ style }) {
         this.style = style
-        this.username = username
-        this.socket.emit('start_game', this.username)
+        this.socket.emit('start_game', this.user.id)
       },
 
       /**
@@ -134,8 +132,6 @@
        */
       updateTurn(number) {
         this.moves.push(this._generateMoveMessage(number))
-
-        // TODO Update VARIABLES
         this.match.number = number
 
         let temp = this.match.currentTurnPlayer
@@ -234,6 +230,10 @@
     },
 
     created () {
+      if (!this.user) {
+        router.push({ name: 'Home'})
+      }
+
       // Initialize socket connection
       if (!this.socket) {
         this.initialize()
@@ -335,12 +335,30 @@
           }
         }
       })
+
+      this.registerEvent({
+        event: 'game_won',
+        callback: () => {
+          alert('You have won')
+        }
+      })
+
+      this.registerEvent({
+        event: 'game_lost',
+        callback: () => {
+          alert('You have lost')
+        }
+      })
     }
   }
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-  .moves-container {
-    margin-top: 1em;
-  }
+.player-info {
+  margin: 1em 0 2em 0;
+}
+
+.moves-container {
+  margin-top: 1em;
+}
 </style>

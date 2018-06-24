@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import threeClient from '../../services/threeClient/index'
 
 // Initial state
 
@@ -17,7 +18,24 @@ const getters = {
 // Actions
 
 const actions = {
-
+  /**
+   * Perform Login.
+   *
+   * @param commit
+   * @param {String} username
+   * @param {String} password
+   */
+  login({commit}, {username, password}) {
+    return new Promise((resolve, reject) => {
+      threeClient.login(username, password)
+        .then((response) => {
+          commit('setUser', response.data.data)
+          resolve(response.data.data)
+        }).catch((error) => {
+        reject(error.response)
+      })
+    })
+  }
 }
 
 // Mutations
@@ -29,6 +47,8 @@ const mutations = {
    * @param state
    */
   init (state) {
+    console.log(process.env.API_URL)
+
     const socket = io(process.env.API_URL, {
       'path': '/game'
     })

@@ -60,7 +60,7 @@
   import MatchClient from '../services/match/matchClient'
   import { mapGetters, mapMutations } from 'vuex'
   import router from '../router/index'
-  import swal from 'sweetalert';
+  import swal from 'sweetalert'
 
   export default {
     components: {
@@ -130,9 +130,13 @@
     methods: {
       ...mapMutations('user', {
         initialize: 'init',
-        registerEvent: 'registerSocketEvent'
+        registerEvent: 'registerSocketEvent',
+        updateUser: 'updateUserMatches'
       }),
 
+      /**
+       * Save the chosen style and emit the sockets 'start_game' event.
+       */
       startGame({ style }) {
         this.style = style
         this.socket.emit('start_game')
@@ -152,6 +156,11 @@
         this.match.nextTurnPlayer = temp
       },
 
+      /**
+       * Generate a message for the next move.
+       *
+       * @param {number} number
+       */
       _generateMoveMessage(number) {
         if (this.match.number > 0) {
           const addedNumber = (number * 3) - this.match.number
@@ -170,6 +179,12 @@
         }
       },
 
+      /**
+       * Open the Move Modal.
+       *
+       * @param {number} number
+       * @param {boolean} newTry
+       */
       _openMoveModal(number, newTry = false) {
         let text
 
@@ -202,15 +217,15 @@
 
               case 'add':
                 summedNumber = number + 1
-                break;
+                break
 
               case 'zero':
                 summedNumber = number
-                break;
+                break
 
               case 'minus':
                 summedNumber = number - 1
-                break;
+                break
 
               default:
                 console.log('Wrong choice')
@@ -233,7 +248,38 @@
                 number: nextNumber
               })
             }, 500)
-          });
+          })
+      },
+
+      /**
+       * Reset the Game.
+       *
+       * @private
+       */
+      _resetGame() {
+        this.queued = false
+        this.messages = []
+        this.moves = []
+        this.match = {
+          match_id: null,
+          player1: {
+            id: null,
+            username: null
+          },
+          player2: {
+            id: null,
+            username: null
+          },
+          number: 0,
+          currentTurnPlayer: {
+            id: null,
+            username: null
+          },
+          nextTurnPlayer: {
+            id: null,
+            username: null
+          }
+        }
       }
     },
 
@@ -310,16 +356,6 @@
         event: 'next_move_announce',
         callback: (data) => {
           const { number, player } = data
-
-          if (number === 1 && player === this.userId) {
-            // TODO UPDATE STATE WITH PLAYED / WON, RESET PAGE
-            alert('You have lost')
-            return;
-          } else if (number === 1 && player !== this.userId) {
-            alert('You have won')
-            return;
-          }
-
           // Check whether the User is the next Player
 
           if (player === this.userId && this.style === 'auto') {
@@ -344,14 +380,29 @@
       this.registerEvent({
         event: 'game_won',
         callback: () => {
-          alert('You have won')
+          this.updateUser({ played: this.user.played + 1, won: this.user.won + 1 })
+          swal('You won!', 'Play another match! ;)')
+            .then((value) => {
+              this._resetGame()
+            });
         }
       })
 
       this.registerEvent({
         event: 'game_lost',
         callback: () => {
-          alert('You have lost')
+          this.updateUser({ played: this.user.played + 1, won: this.user.won })
+          swal('You lost :(', '... but you can play again! ;)')
+            .then((value) => {
+              this._resetGame()
+            });
+        }
+      })
+
+      this.registerEvent({
+        event: 'app_error',
+        callback: ({ error }) => {
+          this.messages.push(error)
         }
       })
     }

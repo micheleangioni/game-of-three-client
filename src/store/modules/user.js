@@ -55,7 +55,7 @@ const mutations = {
   },
 
   /**
-   * Register a new Socket Event
+   * Register a new Socket Event.
    *
    * @param state
    * @param {String} event
@@ -71,6 +71,18 @@ const mutations = {
    */
   setUser (state, user) {
     state.user = user
+  },
+
+  /**
+   * Update the matches stats of the User.
+   *
+   * @param state
+   * @param {number} played
+   * @param {number} won
+   */
+  updateUserMatches (state, { played, won }) {
+    state.user.played = played
+    state.user.won = won
   },
 
   /**

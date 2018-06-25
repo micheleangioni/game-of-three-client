@@ -46,11 +46,9 @@ const mutations = {
    *
    * @param state
    */
-  init (state) {
-    console.log(process.env.API_URL)
-
+  init (state, token) {
     const socket = io(process.env.API_URL, {
-      'path': '/game'
+      'path': `/game/?token=${token}`
     })
 
     state.socket = socket

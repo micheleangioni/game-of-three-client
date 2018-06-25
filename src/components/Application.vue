@@ -95,6 +95,11 @@
         moves: [],
 
         /**
+         * Whether the User has been queued for a game.
+         */
+        queued: false,
+
+        /**
          * Game style.
          */
         style: 'auto',
@@ -130,7 +135,7 @@
 
       startGame({ style }) {
         this.style = style
-        this.socket.emit('start_game', this.user.id)
+        this.socket.emit('start_game')
       },
 
       /**
@@ -239,12 +244,15 @@
 
       // Initialize socket connection
       if (!this.socket) {
-        this.initialize()
+        this.initialize(localStorage.getItem('access_token'))
       }
 
       this.registerEvent({
         event: 'queued',
-        callback: () => this.messages.push('You have been queued, please wait')
+        callback: () => {
+          this.queued = true
+          this.messages.push('You have been queued, please wait')
+        }
       })
 
       this.registerEvent({

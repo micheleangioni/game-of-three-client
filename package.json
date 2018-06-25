@@ -1,7 +1,7 @@
 {
-  "name": "three-client",
+  "name": "game-of-three-client",
   "version": "0.1.0",
-  "description": "Three client",
+  "description": "Game of Three Client",
   "author": {
     "name": "Michele Angioni",
     "email": "michele.angioni@gmail.com"

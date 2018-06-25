@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="hello">
-      <h1>Welcome to the Game of Three ‐ Coding Challenge</h1>
-      <h4>developed by</h4>
+      <div class="takeaway-h2">Welcome to the Game of Three ‐ Coding Challenge</div>
+      <h4 class="developed-by">developed by</h4>
       <h2><i>Michele Angioni</i></h2>
     </div>
 
@@ -37,7 +37,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" rel="stylesheet/scss" scoped>
-h1, h2 {
+h2 {
   font-weight: normal;
 }
 ul {
@@ -47,5 +47,9 @@ ul {
 li {
   display: inline-block;
   margin: 0 10px;
+}
+
+.developed-by {
+  margin: 0.7em 0;
 }
 </style>

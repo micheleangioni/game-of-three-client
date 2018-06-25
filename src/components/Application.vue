@@ -1,13 +1,13 @@
 <template>
-  <div class="container">
+  <div class="">
 
     <div v-if="user" class="player-info">
       Player: {{ user.username }} | Score: {{ user.won }} wins out of {{ user.played }}
     </div>
 
-    <div class="messages-container" v-show="user">
-      <ul class="list-group">
-        <li class="list-group-item disabled active">Messages</li>
+    <div class="messages-container row" v-show="user">
+      <ul class="col col-xs-12 offset-sm-1 col-sm-10 offset-md-2 col-md-8 offset-lg-3 col-lg-6">
+        <li class="list-group-item notification-container">Notifications</li>
 
         <li class="list-group-item" v-show="messages.length === 0">
 
@@ -22,22 +22,30 @@
     </div>
 
     <div class="moves-container" v-if="match.nextTurnPlayer" v-show="user">
-        <div>Next Turn: {{ match.nextTurnPlayer.username }}</div>
+      <div class="row">
+        <div class="next-turn-text col col-xs-12 offset-sm-1 col-sm-10 offset-md-2 col-md-8 offset-lg-3 col-lg-6">
+          <span v-show="match.nextTurnPlayer.username">
+            Next Turn: {{ match.nextTurnPlayer.username }}
+          </span>
+        </div>
+      </div>
 
-      <ul class="list-group">
-        <li class="list-group-item disabled">Player moves</li>
-        <li class="list-group-item"
-            v-for="(move, index) in moves" :key="`${index}`"
-        >
+      <div class="row">
+        <ul class="col col-xs-12 offset-sm-1 col-sm-10 offset-md-2 col-md-8 offset-lg-3 col-lg-6">
+          <li class="list-group-item disabled">Player moves</li>
+          <li class="list-group-item"
+              v-for="(move, index) in moves" :key="`${index}`"
+          >
           <span v-if="move.number && move.number > 0">
             <b>{{move.player}}</b> : adding {{move.added}} and got: {{ move.number }}
           </span>
 
-          <span v-if="!move.number">
+            <span v-if="!move.number">
             <b>{{move.player}}</b> : First round, starting with: {{ move.number }}
           </span>
-        </li>
-      </ul>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div class="start-game-container" v-show="user">
@@ -143,15 +151,12 @@
         if (this.match.number > 0) {
           const addedNumber = (number * 3) - this.match.number
 
-          console.log('generating message', `old: ${this.match.number}`, `new: ${number}`, `added: ${addedNumber}`)
-
           return {
             player: this.match.currentTurnPlayer.username,
             added: addedNumber,
             number: number
           }
         } else {
-          console.log('generating message for first round', `new: ${number}`)
           return {
             player: this.match.currentTurnPlayer.username,
             added: 0,
@@ -214,8 +219,6 @@
 
             const nextNumber = summedNumber / 3
 
-            console.log('MY NEXT MOVE: GOT ' + number + ', my move is ' + nextNumber)
-
             this.updateTurn(number)
 
             // Send the next move
@@ -272,7 +275,6 @@
           const startingNumber = MatchClient.initiateNumber()
 
           // Send the first move
-          console.log('SEND NEXT_MOVE EVENT')
 
           this.socket.emit('next_move', {
             match_id: this.match.match_id,
@@ -299,11 +301,10 @@
       this.registerEvent({
         event: 'next_move_announce',
         callback: (data) => {
-          console.log('GOT next_move_announce EVENT', data)
-
           const { number, player } = data
 
           if (number === 1 && player === this.userId) {
+            // TODO UPDATE STATE WITH PLAYED / WON, RESET PAGE
             alert('You have lost')
             return;
           } else if (number === 1 && player !== this.userId) {
@@ -312,13 +313,9 @@
           }
 
           // Check whether the User is the next Player
-          console.log('check if I must move', player, this.userId, player === this.userId)
 
           if (player === this.userId && this.style === 'auto') {
             const nextNumber = MatchClient.computeNextMoveNumber(number)
-
-            console.log('MY NEXT MOVE: GOT ' + number + ', my move is ' + nextNumber)
-
             this.updateTurn(number)
 
             // Send the next move
@@ -354,11 +351,22 @@
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+@import '../variables';
+
 .player-info {
   margin: 1em 0 2em 0;
 }
 
 .moves-container {
   margin-top: 1em;
+
+  .next-turn-text {
+    margin-bottom: 0.2em;
+  }
+}
+
+.notification-container {
+  background-color: $takeaway-primary-color;
+  color: white;
 }
 </style>

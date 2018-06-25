@@ -17,14 +17,18 @@
 
         <div class="form-group">
 
-          <label for="game-username-input">Register to Game of Three</label>
+          <label class="takeaway-h2" for="game-username-input">Register to Game of Three</label>
           <input type="text"
                  id="game-username-input"
                  class="form-control"
                  placeholder="Enter your username"
                  v-model="username"
           >
-          <small><span v-if="username.length < 6"><i>The username must be at least 3 characters long.</i></span></small>
+          <small class="form-error">
+            <div class="form-error">
+              <span v-if="username.length < 6"><i>The username must be at least 3 characters long.</i></span>
+            </div>
+          </small>
 
           <input type="password"
                  id="game-password-input"
@@ -32,11 +36,15 @@
                  placeholder="Enter your password"
                  v-model="password"
           >
-          <small><span v-if="password.length < 6"><i>The password must be at least 6 characters long.</i></span></small>
+          <small>
+            <div class="form-error">
+              <span v-if="password.length < 6"><i>The password must be at least 6 characters long.</i></span>
+            </div>
+          </small>
 
         </div>
 
-        <button class="btn btn-success register-button"
+        <button class="btn btn-takeaway-action register-button"
                 @click="register"
                 :disabled="isUsernameInvalid || isPasswordInvalid"
         >
@@ -111,6 +119,10 @@ export default {
 <style lang="scss" rel="stylesheet/scss" scoped>
 .alert-container {
   height: 3em;
+}
+
+.form-error {
+  height: 1em;
 }
 
 .registration-form {

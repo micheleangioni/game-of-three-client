@@ -1,10 +1,6 @@
 <template>
   <div class="game-settings-container">
 
-    <div>
-      Instructions
-    </div>
-
     <form v-on:submit.prevent>
 
       <!-- Game Style Choice -->
@@ -15,8 +11,8 @@
                 class="btn"
                 @click="setGameStyle('auto')"
                 v-bind:class="{
-                  'btn-primary': style === 'auto',
-                  'btn-outline-primary': style === 'manual'
+                  'btn-takeaway-primary': style === 'auto',
+                  'btn-takeaway-outlined-primary': style === 'manual'
                 }"
         >
           Play Automatically
@@ -26,8 +22,8 @@
                 class="btn "
                 @click="setGameStyle('manual')"
                 v-bind:class="{
-                  'btn-primary': style === 'manual',
-                  'btn-outline-primary': style === 'auto'
+                  'btn-takeaway-primary': style === 'manual',
+                  'btn-takeaway-outlined-primary': style === 'auto'
                 }"
         >
           Manual Play
@@ -35,7 +31,7 @@
 
       </div>
 
-      <button class="btn btn-success start-button"
+      <button class="btn btn-takeaway-action"
               @click="startGame"
       >
         Start Game!
@@ -87,10 +83,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 .group-style {
-  margin-top: 2em;
-}
-
-.start-button {
   margin-top: 2em;
 }
 </style>

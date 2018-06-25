@@ -6,7 +6,7 @@
       <form v-on:submit.prevent class="login-form">
         <div class="form-group">
 
-          <label for="game-username-input">Enter your credentials to login</label>
+          <label class="form-title" for="game-username-input">Enter your credentials to login</label>
           <input type="text"
                  id="game-username-input"
                  class="form-control"
@@ -29,14 +29,14 @@
           </div>
         </div>
 
-        <button class="btn btn-success login-button"
+        <button class="btn btn-takeaway-action login-button"
                 @click="login"
                 :disabled="isUsernameInvalid || isPasswordInvalid"
         >
           Login
         </button>
 
-        <router-link class="btn btn-primary btn-router login-button" :to="{ name: 'Register' }">
+        <router-link class="btn btn-takeaway-primary btn-router login-button" :to="{ name: 'Register' }">
           Register
         </router-link>
       </form>
@@ -113,12 +113,16 @@ export default {
 }
 
 .login-form {
+  .form-title {
+    margin-top: 0.5em;
+  }
+
   input {
     margin-top: 1em;
   }
 }
 
 .login-button {
-  margin-top: 2em;
+  margin-top: 1em;
 }
 </style>
